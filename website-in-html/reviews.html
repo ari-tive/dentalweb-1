@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,400;0,700;1,300&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-container": "#f3fffe",
+              "surface-variant": "#e1e3e3",
+              "outline-variant": "#bdc9c8",
+              "on-error": "#ffffff",
+              "surface-container-highest": "#e1e3e3",
+              "on-secondary": "#ffffff",
+              "secondary": "#725b25",
+              "on-secondary-container": "#78612a",
+              "secondary-container": "#fedf9b",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#ffe088",
+              "on-primary-fixed": "#002020",
+              "error": "#ba1a1a",
+              "surface": "#f8f9f9",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed-variant": "#58440f",
+              "inverse-surface": "#2e3131",
+              "secondary-fixed": "#fedf9b",
+              "on-primary-fixed-variant": "#004f50",
+              "on-tertiary-fixed": "#241a00",
+              "on-primary": "#ffffff",
+              "primary": "#006767",
+              "tertiary-fixed-dim": "#e9c349",
+              "inverse-on-surface": "#f0f1f1",
+              "inverse-primary": "#7ed5d4",
+              "surface-tint": "#006a6a",
+              "on-background": "#191c1c",
+              "tertiary-container": "#cca830",
+              "surface-container": "#edeeee",
+              "outline": "#6e7979",
+              "tertiary": "#735c00",
+              "surface-container-high": "#e7e8e8",
+              "on-tertiary-fixed-variant": "#574500",
+              "surface-dim": "#d9dada",
+              "primary-fixed-dim": "#7ed5d4",
+              "primary-container": "#208181",
+              "error-container": "#ffdad6",
+              "primary-fixed": "#9bf1f1",
+              "surface-bright": "#f8f9f9",
+              "on-tertiary-container": "#4f3e00",
+              "on-secondary-fixed": "#251a00",
+              "surface-container-low": "#f3f4f4",
+              "on-surface-variant": "#3e4948",
+              "on-error-container": "#93000a",
+              "background": "#f8f9f9",
+              "on-surface": "#191c1c",
+              "secondary-fixed-dim": "#e1c382"
+            },
+            fontFamily: {
+              "headline": ["Noto Serif"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, .font-serif {
+            font-family: 'Noto Serif', serif;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed-dim">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none transition-colors duration-300">
+<div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+<div class="text-xl font-serif italic text-teal-900 dark:text-teal-50">Dr. Akash Singh</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-300 transition-all font-body text-sm uppercase tracking-wider" href="#">Home</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-300 transition-all font-body text-sm uppercase tracking-wider" href="#">Services</a>
+<a class="text-teal-700 dark:text-teal-300 font-semibold font-body text-sm uppercase tracking-wider" href="#">Reviews</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-300 transition-all font-body text-sm uppercase tracking-wider" href="#">Book</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-teal-800 dark:text-teal-200 p-2 hover:bg-teal-50 rounded-full transition-all">calendar_today</button>
+<button class="material-symbols-outlined text-teal-800 dark:text-teal-200 p-2 hover:bg-teal-50 rounded-full transition-all md:hidden">menu</button>
+</div>
+</div>
+</header>
+<main class="pt-32 pb-40">
+<!-- Hero Header -->
+<section class="max-w-7xl mx-auto px-6 mb-20 text-center md:text-left">
+<div class="inline-block px-4 py-1.5 mb-6 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant text-xs font-bold tracking-widest uppercase">
+                Patient Experiences
+            </div>
+<h1 class="text-5xl md:text-7xl font-serif font-light tracking-tight text-primary mb-6 leading-tight">
+                Patient Reviews
+            </h1>
+<p class="text-xl font-body text-on-surface-variant max-w-2xl leading-relaxed">
+                Trusted by 250+ happy patients. We believe in precision through calmness and delivering excellence in every smile.
+            </p>
+</section>
+<!-- Rating Summary Card -->
+<section class="max-w-7xl mx-auto px-6 mb-24">
+<div class="bg-surface-container-low rounded-xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 md:gap-16">
+<div class="text-center md:text-left">
+<div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+<span class="text-5xl font-serif font-bold text-primary">4.9</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-4xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+</div>
+<p class="text-on-surface-variant font-medium">Overall Patient Rating</p>
+</div>
+<div class="h-px md:h-20 w-full md:w-px bg-outline-variant/30"></div>
+<div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-8 w-full text-center md:text-left">
+<div>
+<div class="text-2xl font-serif text-primary">250+</div>
+<p class="text-sm text-on-surface-variant">Verified Reviews</p>
+</div>
+<div>
+<div class="text-2xl font-serif text-primary">15+</div>
+<p class="text-sm text-on-surface-variant">Years of Care</p>
+</div>
+<div>
+<div class="text-2xl font-serif text-primary">99%</div>
+<p class="text-sm text-on-surface-variant">Satisfaction Rate</p>
+</div>
+<div>
+<div class="text-2xl font-serif text-primary">5.0</div>
+<p class="text-sm text-on-surface-variant">Google Rating</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Reviews Bento Grid -->
+<section class="max-w-7xl mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Review 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_20px_40px_rgba(0,103,103,0.06)] flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300">
+<div>
+<div class="flex gap-1 mb-6">
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+</div>
+<p class="text-lg font-body text-on-surface leading-relaxed mb-8 italic">
+                            "Very kind doctors and staff. Made me feel comfortable. The clinic environment is so peaceful, unlike any other dental office I've visited."
+                        </p>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-fixed-dim flex items-center justify-center text-primary font-bold">AS</div>
+<div>
+<p class="font-bold text-on-surface">Amit Sharma</p>
+<p class="text-sm text-on-surface-variant">Root Canal Treatment</p>
+</div>
+</div>
+</div>
+<!-- Review 2 (Highlighted/Larger) -->
+<div class="bg-primary-container p-8 rounded-xl md:row-span-2 flex flex-col justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-secondary-container text-5xl mb-6">format_quote</span>
+<p class="text-2xl md:text-3xl font-serif font-light leading-snug mb-12">
+                        "Pain-free experience, Dr. Akash is very gentle. I was terrified of dental work, but his calm approach changed everything for me. Truly a sanctuary."
+                    </p>
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full border-2 border-secondary-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a smiling male patient" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ5oS3pZvFHkbZdvj828VVftZwA6YfHmpsCnZ1HK7xvoTlboiYzIh9-7p1tlaq7ToxIb12FB81B5tlvElR5KDZC2WnmaLyKrFdk9AqJuyWgtppMm0x6JvszK-cf64RnturiapbYAKHiGeYxAclMwJe6Lrd00fLPzvC373p5kdNMnK1Tz-uomac26yplVOngGTS6ObEhi5mnEWOHQledTyHQRqeru4RR1SpvlLGPCYKgpOdvrELrQ9HGyvks_zyn65BX-IQ3DgflYA"/>
+</div>
+<div>
+<p class="font-bold text-xl">Vikram Singh</p>
+<p class="text-sm text-primary-fixed opacity-80">Full Smile Makeover</p>
+</div>
+</div>
+</div>
+<!-- Review 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_20px_40px_rgba(0,103,103,0.06)] flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300">
+<div>
+<div class="flex gap-1 mb-6">
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+</div>
+<p class="text-lg font-body text-on-surface leading-relaxed mb-8 italic">
+                            "Great service and vibe. Highly recommended! The technology they use is very advanced, and everything was explained clearly."
+                        </p>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed-variant font-bold">PP</div>
+<div>
+<p class="font-bold text-on-surface">Priya Patel</p>
+<p class="text-sm text-on-surface-variant">Teeth Whitening</p>
+</div>
+</div>
+</div>
+<!-- Review 4 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_20px_40px_rgba(0,103,103,0.06)] flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300">
+<div>
+<div class="flex gap-1 mb-6">
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+</div>
+<p class="text-lg font-body text-on-surface leading-relaxed mb-8 italic">
+                            "The best dental experience I've had in years. Professionalism at its peak. Dr. Akash's hands are magic."
+                        </p>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed font-bold">RK</div>
+<div>
+<p class="font-bold text-on-surface">Rajesh Kumar</p>
+<p class="text-sm text-on-surface-variant">Dental Implants</p>
+</div>
+</div>
+</div>
+<!-- Review 5 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_20px_40px_rgba(0,103,103,0.06)] flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300">
+<div>
+<div class="flex gap-1 mb-6">
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="material-symbols-outlined text-secondary filled-icon text-xl" style="font-variation-settings: 'FILL' 1;">grade</span>
+</div>
+<p class="text-lg font-body text-on-surface leading-relaxed mb-8 italic">
+                            "Incredible staff and a very clean facility. Dr. Akash takes the time to listen and answer all your questions."
+                        </p>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold">SL</div>
+<div>
+<p class="font-bold text-on-surface">Sanya Lodi</p>
+<p class="text-sm text-on-surface-variant">Orthodontics</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="max-w-4xl mx-auto px-6 mt-32 text-center">
+<div class="bg-surface-container-high rounded-xl p-12 md:p-20 relative overflow-hidden">
+<div class="relative z-10">
+<h2 class="text-4xl md:text-5xl font-serif text-primary mb-8 leading-tight">Ready for your own<br/>transformative experience?</h2>
+<button class="bg-primary text-on-primary px-10 py-5 rounded-full text-lg font-semibold hover:bg-surface-tint transition-all active:scale-95 shadow-lg shadow-primary/20">
+                        Book Your Appointment
+                    </button>
+<p class="mt-8 text-on-surface-variant font-medium">Join our family of 250+ happy patients.</p>
+</div>
+<!-- Decorative element -->
+<div class="absolute -right-20 -bottom-20 w-64 h-64 rounded-full bg-primary-container/10"></div>
+<div class="absolute -left-10 -top-10 w-40 h-40 rounded-full bg-secondary-container/20"></div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-50 dark:bg-slate-950 w-full py-12 px-8 border-t border-teal-50 dark:border-teal-900/20">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
+<div class="flex flex-col items-center md:items-start gap-2">
+<div class="font-serif text-lg text-teal-800">Akash Multi-speciality Dental Clinic</div>
+<p class="font-sans text-sm tracking-relaxed text-slate-500 text-center md:text-left max-w-xs">© 2024 Akash Multi-speciality Dental Clinic. Precision through Calmness.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-slate-500 hover:text-teal-600 transition-colors font-sans text-sm tracking-relaxed" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-teal-600 transition-colors font-sans text-sm tracking-relaxed" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-teal-600 transition-colors font-sans text-sm tracking-relaxed" href="#">Contact</a>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl rounded-t-[3rem] z-50 shadow-[0_-10px_40px_rgba(0,103,103,0.08)] flex justify-around items-center px-4 pb-6 pt-3 tonal-shift bg-slate-50/50 dark:bg-slate-900/50">
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/20 transition-all">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[11px] font-medium tracking-wide">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/20 transition-all">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="text-[11px] font-medium tracking-wide">Services</span>
+</button>
+<button class="flex flex-col items-center justify-center text-teal-800 dark:text-teal-100 bg-teal-50 dark:bg-teal-900/40 rounded-full px-5 py-2">
+<span class="material-symbols-outlined filled-icon" style="font-variation-settings: 'FILL' 1;">grade</span>
+<span class="text-[11px] font-medium tracking-wide">Reviews</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/20 transition-all">
+<span class="material-symbols-outlined">event</span>
+<span class="text-[11px] font-medium tracking-wide">Book</span>
+</button>
+</nav>
+</body></html>
