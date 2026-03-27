@@ -50,23 +50,36 @@ STRICT INSTRUCTIONS:
 
     const finalMessages = messages[0]?.role === 'system' ? messages : [SYSTEM_PROMPT, ...messages];
     
-    const sdk = new Bytez(process.env.BYTEZ_API_KEY);
-    const model = sdk.model("openai/gpt-oss-20b");
-    const result = await model.run(finalMessages);
-    
-    if (result.error) {
-      throw new Error(typeof result.error === 'string' ? result.error : JSON.stringify(result.error))
-    }
-    
-    let reply = result.output
-    if (reply && typeof reply === 'object') {
+    // Direct fetch to Bytez REST API to avoid Vercel Edge/Serverless SDK issues
+    const response = await fetch(
+      "https://api.bytez.com/models/v2/openai/gpt-oss-20b",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.BYTEZ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ messages: finalMessages, max_tokens: 500 })
+      }
+    )
+
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || "Bytez API failed")
+
+    let reply = data?.output ||
+                data?.choices?.[0]?.message?.content ||
+                data?.content ||
+                "I couldn't process that. Please try again."
+
+    if (typeof reply === 'object') {
       reply = reply.content || reply.message?.content || JSON.stringify(reply)
     }
+    
     reply = cleanModelOutput(reply)
     
     res.status(200).json({ reply })
   } catch (err) {
-    console.error("API error:", err)
-    res.status(500).json({ error: "Something went wrong." })
+    console.error("API error:", err.message)
+    res.status(500).json({ error: err.message })
   }
 }
