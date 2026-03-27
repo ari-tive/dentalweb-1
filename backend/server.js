@@ -22,7 +22,7 @@ const processBytezQueue = async () => {
   
   try {
     const sdk = new Bytez(process.env.BYTEZ_API_KEY);
-    const model = sdk.model("google/gemma-3-4b-it");
+    const model = sdk.model("openai/gpt-oss-20b");
     
     if (process.env.NODE_ENV !== "production") {
       console.log("Processing Bytez request...");
@@ -44,6 +44,29 @@ const runModelQueued = (messages) => {
     processBytezQueue();
   });
 };
+
+// Strip model chain-of-thought / analysis leakage from output
+const cleanModelOutput = (raw) => {
+  if (!raw || typeof raw !== 'string') return raw;
+  // Extract only text after known "final answer" markers
+  const markers = ['assistantfinal', 'assistant final', '<|assistant|>'];
+  for (const marker of markers) {
+    const idx = raw.toLowerCase().indexOf(marker.toLowerCase());
+    if (idx !== -1) {
+      raw = raw.slice(idx + marker.length).trim();
+      break;
+    }
+  }
+  // Strip XML-style thinking tags
+  raw = raw.replace(/^<think>[\s\S]*?<\/think>/i, '').trim();
+  // Strip leading "analysis" block — find first real sentence after it
+  if (/^analysis/i.test(raw)) {
+    const match = raw.match(/\n([A-Z].+)/s);
+    if (match) raw = match[1].trim();
+  }
+  return raw.trim();
+};
+
 
 // 2. HELMET — HTTP SECURITY HEADERS
 app.use(helmet())
@@ -146,7 +169,9 @@ STRICT INSTRUCTIONS:
 2. If the user asks about ANY unrelated topic (e.g., general knowledge, math, history, coding, sports, celebrities, etc.), you MUST politely decline. 
 3. Sample rejection: "I'm sorry, I'm only trained to assist with dental-related inquiries for Smile's Clinic. How can I help you with your oral health today?"
 4. Never diagnose conditions. Always suggest booking an appointment for specific concerns.
-5. When a user wants to book, say: "You can book right now by calling on this number or by visiting the 'Book Now' page on the website!"`
+5. When a user wants to book, always include the phrase "book now" or "Book Now" in your reply so they can be redirected easily.
+6. CRITICAL: Never show any internal reasoning, thinking, analysis, or planning in your reply. Respond directly, warmly, and concisely — like a friendly human receptionist would. Keep it natural and conversational; avoid robotic bullet-point lists.
+7. CRITICAL: Keep every reply between 10–20 words maximum. Be brief and to the point.`
       };
 
       const finalMessages = messages[0]?.role === 'system' ? messages : [SYSTEM_PROMPT, ...messages];
@@ -161,6 +186,7 @@ STRICT INSTRUCTIONS:
       if (reply && typeof reply === 'object') {
         reply = reply.content || reply.message?.content || JSON.stringify(reply)
       }
+      reply = cleanModelOutput(reply)
       
       res.json({ reply })
     } catch (err) {

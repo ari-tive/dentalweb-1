@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Headset, X, Send, MessageCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Headset, X, Send, MessageCircle, CalendarCheck } from 'lucide-react';
 
 const SYSTEM_PROMPT = `You are a helpful dental clinic assistant for Smile's Clinic. 
 Lead Doctor: Dr. Smiles
@@ -16,7 +17,13 @@ STRICT INSTRUCTIONS:
 2. If the user asks about ANY unrelated topic (e.g., general knowledge, math, history, coding, sports, celebrities, etc.), you MUST politely decline. 
 3. Sample rejection: "I'm sorry, I'm only trained to assist with dental-related inquiries for Smile's Clinic. How can I help you with your oral health today?"
 4. Never diagnose conditions. Always suggest booking an appointment for specific concerns.
-5. When a user wants to book, say: "You can book right now by calling on this number or by visiting the 'Book Now' page on the website!"`;
+5. When a user wants to book, always include the phrase "book now" or "Book Now" in your reply so they can be redirected easily.
+6. CRITICAL: Never show any internal reasoning, thinking, analysis, or planning in your reply. Respond directly, warmly, and concisely — like a friendly human receptionist would. Keep it natural and conversational; avoid robotic bullet-point lists.
+7. CRITICAL: Keep every reply between 10–20 words maximum. Be brief and to the point.`;
+
+
+// Show booking card ONLY when AI explicitly says "book now" (AI is instructed to say this only when booking intent is clear)
+const detectsBookingIntent = (text) => /book now/i.test(text);
 
 const QUICK_REPLIES = [
   { label: "Book an Appointment", message: "I want to book an appointment" },
@@ -25,6 +32,7 @@ const QUICK_REPLIES = [
 ];
 
 export default function Chatbot() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     { role: 'assistant', content: "Hello! 👋 How can we help you today with your dental care?" }
@@ -165,7 +173,11 @@ export default function Chatbot() {
         ? data.reply
         : data.reply?.content || data.reply?.message?.content || "I couldn't process that. Please try again.";
 
-      setMessages(prev => [...prev, { role: 'assistant', content: botReply }]);
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: botReply,
+        showBookingCard: detectsBookingIntent(botReply),
+      }]);
     } catch (err) {
       setMessages(prev => [...prev, {
         role: 'assistant',
@@ -237,7 +249,7 @@ export default function Chatbot() {
 
           <div className="p-6 flex-grow bg-slate-50 overflow-y-auto space-y-4 chatbot-messages">
             {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                 <div className={`p-4 rounded-xl text-sm max-w-[85%] ${
                   msg.role === 'user'
                     ? 'bg-primary text-white rounded-tr-none'
@@ -245,6 +257,22 @@ export default function Chatbot() {
                 }`}>
                   {msg.content}
                 </div>
+
+                {/* Book Now Card */}
+                {msg.showBookingCard && (
+                  <button
+                    onClick={() => { setIsOpen(false); navigate('/book'); }}
+                    className="mt-2 flex items-center gap-3 bg-gradient-to-r from-primary to-teal-600 text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.03] active:scale-100 transition-all duration-200 text-sm font-bold max-w-[85%] group"
+                  >
+                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-white/30 transition-colors">
+                      <CalendarCheck className="w-4 h-4" />
+                    </div>
+                    <div className="text-left">
+                      <p className="font-bold leading-tight">Book an Appointment</p>
+                      <p className="text-white/75 text-xs font-normal">Tap to open the booking form →</p>
+                    </div>
+                  </button>
+                )}
               </div>
             ))}
 
