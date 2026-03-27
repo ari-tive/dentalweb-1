@@ -58,8 +58,8 @@ export default function Book() {
     setErrors(prev => ({ ...prev, submit: '' }));
 
     try {
-      // Pointing to the Express backend (Port 3001) for verification
-      const verifyRes = await fetch("http://localhost:3001/api/verify-captcha", {
+      // Pointing to the Express backend or Vercel API
+      const verifyRes = await fetch("/api/verify-captcha", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: captchaToken })
