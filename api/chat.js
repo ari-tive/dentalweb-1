@@ -13,7 +13,7 @@ export default async function handler(req, res) {
       {
         method: "POST",
         headers: {
-          "Authorization": process.env.BYTEZ_API_KEY,
+          "Authorization": `Bearer ${process.env.BYTEZ_API_KEY}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
