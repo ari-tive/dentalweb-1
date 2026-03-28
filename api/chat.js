@@ -9,31 +9,26 @@ export default async function handler(req, res) {
     }
 
     const response = await fetch(
-      "https://api.bytez.com/models/v2/google/gemma-3-4b-it",
+      "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${process.env.BYTEZ_API_KEY}`,
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          messages,
-          stream: false,
-          params: {
-            min_length: 10,
-            max_length: 500,
-            temperature: 0.7
-          }
+          model: "llama3-8b-8192",
+          messages: messages,
+          max_tokens: 500,
+          temperature: 0.7
         })
       }
     )
 
     const data = await response.json()
-    console.log("Bytez raw response:", JSON.stringify(data))
+    if (!response.ok) throw new Error(data.error?.message || "Groq failed")
 
-    if (data.error) throw new Error(data.error)
-
-    const reply = data?.output?.content ||
+    const reply = data.choices?.[0]?.message?.content ||
                   "I couldn't process that. Please try again."
 
     res.status(200).json({ reply })
