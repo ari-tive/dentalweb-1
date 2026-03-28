@@ -1,25 +1,16 @@
-
-
 async function test() {
   try {
-    const res = await fetch('https://smileysclicnic.vercel.app/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: [{ role: 'user', content: 'test' }]
-      })
+    const res = await fetch("https://dentalweb-1-production.up.railway.app/api/verify-captcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: "test" })
     });
-    
-    if (res.headers.get('content-type')?.includes('application/json')) {
-      const data = await res.json();
-      console.log('JSON:', data);
-    } else {
-      const text = await res.text();
-      console.log('TEXT Error (length ' + text.length + '):\n', text.substring(0, 500));
-    }
-    console.log('Status:', res.status);
-  } catch (e) {
-    console.error('Fetch error:', e);
+    console.log("Status:", res.status);
+    console.log("Headers:", JSON.stringify(Object.fromEntries(res.headers.entries()), null, 2));
+    const text = await res.text();
+    console.log("Body:", text);
+  } catch (err) {
+    console.error("Fetch failed:", err);
   }
 }
 test();
