@@ -1,6 +1,6 @@
 import express from "express"
 import cors from "cors"
-import Bytez from "bytez.js"
+
 import dotenv from "dotenv"
 import helmet from "helmet"
 import rateLimit from "express-rate-limit"
@@ -9,63 +9,6 @@ import { body, validationResult } from "express-validator"
 dotenv.config()
 
 const app = express()
-
-// Bytez Request Queuing System
-let isBytezProcessing = false;
-const bytezQueue = [];
-
-const processBytezQueue = async () => {
-  if (isBytezProcessing || bytezQueue.length === 0) return;
-  
-  isBytezProcessing = true;
-  const { messages, resolve, reject } = bytezQueue.shift();
-  
-  try {
-    const sdk = new Bytez(process.env.BYTEZ_API_KEY);
-    const model = sdk.model("openai/gpt-oss-20b");
-    
-    if (process.env.NODE_ENV !== "production") {
-      console.log("Processing Bytez request...");
-    }
-    
-    const result = await model.run(messages);
-    resolve(result);
-  } catch (err) {
-    reject(err);
-  } finally {
-    isBytezProcessing = false;
-    processBytezQueue();
-  }
-};
-
-const runModelQueued = (messages) => {
-  return new Promise((resolve, reject) => {
-    bytezQueue.push({ messages, resolve, reject });
-    processBytezQueue();
-  });
-};
-
-// Strip model chain-of-thought / analysis leakage from output
-const cleanModelOutput = (raw) => {
-  if (!raw || typeof raw !== 'string') return raw;
-  // Extract only text after known "final answer" markers
-  const markers = ['assistantfinal', 'assistant final', '<|assistant|>'];
-  for (const marker of markers) {
-    const idx = raw.toLowerCase().indexOf(marker.toLowerCase());
-    if (idx !== -1) {
-      raw = raw.slice(idx + marker.length).trim();
-      break;
-    }
-  }
-  // Strip XML-style thinking tags
-  raw = raw.replace(/^<think>[\s\S]*?<\/think>/i, '').trim();
-  // Strip leading "analysis" block — find first real sentence after it
-  if (/^analysis/i.test(raw)) {
-    const match = raw.match(/\n([A-Z].+)/s);
-    if (match) raw = match[1].trim();
-  }
-  return raw.trim();
-};
 
 
 // 2. HELMET — HTTP SECURITY HEADERS
@@ -110,7 +53,7 @@ const chatLimiter = rateLimit({
 })
 
 if (process.env.NODE_ENV !== "production") {
-  console.log("BYTEZ_API_KEY loaded:", process.env.BYTEZ_API_KEY ? "Yes" : "No")
+  console.log("GROQ_API_KEY loaded:", process.env.GROQ_API_KEY ? "Yes" : "No")
 }
 
 // reCAPTCHA verification endpoint
@@ -132,68 +75,43 @@ app.post("/api/verify-captcha", async (req, res) => {
   }
 })
 
-app.post("/api/chat", 
-  chatLimiter,
-  [
-    body('messages').isArray({ max: 20 }).withMessage('Messages must be an array of max 20 items'),
-    body('messages.*.role').isIn(['user', 'assistant', 'system']).withMessage('Invalid role'),
-    body('messages.*.content').isString().isLength({ max: 2000 }).withMessage('Content too long or not a string')
-  ],
-  async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() })
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { messages } = req.body
+    if (!messages || !Array.isArray(messages)) {
+      return res.status(400).json({ error: "Invalid messages" })
     }
 
-    try {
-      const { messages } = req.body
-      if (process.env.NODE_ENV !== "production") {
-        console.log("Received messages:", JSON.stringify(messages?.length), "messages")
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "llama3-8b-8192",
+          messages: messages,
+          max_tokens: 500,
+          temperature: 0.7
+        })
       }
-      
-      // Standardize messages with System Prompt if not present
-      const SYSTEM_PROMPT = {
-        role: "system",
-        content: `You are a helpful dental clinic assistant for Smile's Clinic. 
-Lead Doctor: Dr. Smiles
-Clinic Name: Smile's Clinic
-Phone: 9699766850
-Address: Marine Drive, Mumbai, Maharashtra, India.
-Hours: Mon-Sat 10am-9pm
-Services: Multi-speciality dental care, including Root Canal, Implants, Whitening, and Orthodontics.
-Appointment Booking: Via phone (9699766850), website booking form, or walk-in.
-Emergency Contact: 9970352167
+    )
 
-STRICT INSTRUCTIONS:
-1. Only answer questions related to Smile's Clinic, its services, hours, location, and general dental health.
-2. If the user asks about ANY unrelated topic (e.g., general knowledge, math, history, coding, sports, celebrities, etc.), you MUST politely decline. 
-3. Sample rejection: "I'm sorry, I'm only trained to assist with dental-related inquiries for Smile's Clinic. How can I help you with your oral health today?"
-4. Never diagnose conditions. Always suggest booking an appointment for specific concerns.
-5. When a user wants to book, always include the phrase "book now" or "Book Now" in your reply so they can be redirected easily.
-6. CRITICAL: Never show any internal reasoning, thinking, analysis, or planning in your reply. Respond directly, warmly, and concisely — like a friendly human receptionist would. Keep it natural and conversational; avoid robotic bullet-point lists.
-7. CRITICAL: Keep every reply between 10–20 words maximum. Be brief and to the point.`
-      };
+    const data = await response.json()
+    console.log("Groq response:", JSON.stringify(data))
 
-      const finalMessages = messages[0]?.role === 'system' ? messages : [SYSTEM_PROMPT, ...messages];
-      
-      const result = await runModelQueued(finalMessages)
-      
-      if (result.error) {
-        throw new Error(typeof result.error === 'string' ? result.error : JSON.stringify(result.error))
-      }
-      
-      let reply = result.output
-      if (reply && typeof reply === 'object') {
-        reply = reply.content || reply.message?.content || JSON.stringify(reply)
-      }
-      reply = cleanModelOutput(reply)
-      
-      res.json({ reply })
-    } catch (err) {
-      // 6. ERROR HANDLING — NO STACK TRACES EXPOSED
-      console.error("Backend error:", err)
-      res.status(500).json({ error: "Something went wrong." })
-    }
+    if (!response.ok) throw new Error(data.error?.message || "Groq API failed")
+
+    const reply = data.choices?.[0]?.message?.content ||
+                  "I couldn't process that. Please try again."
+
+    res.status(200).json({ reply })
+  } catch (err) {
+    console.error("Chat error:", err.message)
+    res.status(500).json({ error: err.message })
+  }
 })
 
 const PORT = process.env.PORT || 3001
