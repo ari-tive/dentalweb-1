@@ -59,7 +59,7 @@ export default function Book() {
 
     try {
       // Pointing to the Express backend or Vercel API
-      const verifyRes = await fetch("/api/verify-captcha", {
+      const verifyRes = await fetch("https://dentalweb-1-production.up.railway.app/api/verify-captcha", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: captchaToken })

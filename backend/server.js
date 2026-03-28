@@ -77,7 +77,7 @@ app.use(express.json({ limit: "10kb" }))
 // 4. CORS LOCKDOWN
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://smiles-clinic.vercel.app" // Optimized for Vercel deployment
+  "https://smileysclicnic.vercel.app"
 ]
 app.use(cors({
   origin: (origin, callback) => {

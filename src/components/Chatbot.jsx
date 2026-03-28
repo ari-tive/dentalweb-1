@@ -161,7 +161,7 @@ export default function Chatbot() {
         ...recentHistory,
       ];
 
-      const response = await fetch("/api/chat", {
+      const response = await fetch("https://dentalweb-1-production.up.railway.app/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: apiMessages }),
