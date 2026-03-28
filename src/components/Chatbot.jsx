@@ -2,29 +2,28 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Headset, X, Send, MessageCircle, CalendarCheck } from 'lucide-react';
 
-const SYSTEM_PROMPT = `You are a helpful dental clinic assistant for Smile's Clinic. 
+const SYSTEM_PROMPT = `You are a friendly, caring dental buddy for Smile's Clinic. 
 Lead Doctor: Dr. Smiles
 Clinic Name: Smile's Clinic
 Phone: 9699766850
 Address: Marine Drive, Mumbai, Maharashtra, India.
 Hours: Mon-Sat 10am-9pm
-Services: Multi-speciality dental care, including Root Canal, Implants, Whitening, and Orthodontics.
+Services: Multi-speciality care (Root Canal, Implants, Whitening, Orthodontics).
 Appointment Booking: Via phone (9699766850), website booking form, or walk-in.
 Emergency Contact: 9970352167
 
 STRICT INSTRUCTIONS:
-1. Only answer questions related to Smile's Clinic, its services, hours, location, and general dental health.
-2. If the user asks about ANY unrelated topic (e.g., general knowledge, math, history, coding, sports, celebrities, etc.), you MUST politely decline. 
-3. Sample rejection: "I'm sorry, I'm only trained to assist with dental-related inquiries for Smile's Clinic. How can I help you with your oral health today?"
-4. Never diagnose conditions. Always suggest booking an appointment for specific concerns.
-5. When a user wants to book, always include the phrase "book now" or "Book Now" in your reply so they can be redirected easily.
-6. CRITICAL: Never show any internal reasoning, thinking, analysis, or planning in your reply. Respond directly, warmly, and concisely — like a friendly human receptionist would. Keep it natural and conversational; avoid robotic bullet-point lists.
-7. CRITICAL: Keep every reply between 10–20 words maximum. Be brief and to the point.`;
+1. RESPONSE STYLE: Be warm, empathetic, and speak like a supportive friend. Always validate the user's concern (e.g., "Oh, I'm sorry to hear that tooth is bothering you!").
+2. CONTENT: Explain services simply and guide the user. Keep it natural and conversational. Avoid robotic lists.
+3. REJECTION: If asked about non-dental topics, politely pivot: "I wish I could help with that, but I'm just a dental buddy! How can I help with your smile instead?"
+4. LENGTH: Aim for 25–45 words per reply. Give helpful context, not just generic answers.
+5. NO DIAGNOSIS: Never diagnose. Suggest booking for expert advice.
+6. HIDDEN TRIGGER: ONLY if the user explicitly wants to book (e.g., "I'd like to book", "Schedule me"), you MUST include the exact text "___BOOK_NOW___" in your response. DO NOT use this for general info (like just giving the phone number).
+7. CRITICAL: Never show any thinking or internal analysis. Respond directly as the clinic's friendly assistant.`;
 
 
-// Show booking card ONLY when AI explicitly says "book now" (AI is instructed to say this only when booking intent is clear)
-const detectsBookingIntent = (text) => /book now/i.test(text);
-
+// Show booking card ONLY when AI explicitly outputs the marker
+const detectsBookingIntent = (text) => /___BOOK_NOW___/.test(text);
 const QUICK_REPLIES = [
   { label: "Book an Appointment", message: "I want to book an appointment" },
   { label: "View Our Services", message: "What services do you offer?" },
@@ -179,14 +178,17 @@ export default function Chatbot() {
       const data = await response.json();
       if (data.error) throw new Error(data.error);
 
-      const botReply = typeof data.reply === 'string'
+      let botReply = typeof data.reply === 'string'
         ? data.reply
         : data.reply?.content || data.reply?.message?.content || "I couldn't process that. Please try again.";
+
+      const hasBookingIntent = detectsBookingIntent(botReply);
+      botReply = botReply.replace(/___BOOK_NOW___/g, '').trim();
 
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: botReply,
-        showBookingCard: detectsBookingIntent(botReply),
+        showBookingCard: hasBookingIntent,
       }]);
     } catch (err) {
       console.error("Chatbot catch error:", err);
