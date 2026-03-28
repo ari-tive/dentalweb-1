@@ -166,6 +166,13 @@ export default function Chatbot() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: apiMessages }),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("API Response Error:", response.status, errorData);
+        throw new Error(errorData.error || "Server failed");
+      }
+
       const data = await response.json();
       if (data.error) throw new Error(data.error);
 
@@ -179,6 +186,7 @@ export default function Chatbot() {
         showBookingCard: detectsBookingIntent(botReply),
       }]);
     } catch (err) {
+      console.error("Chatbot catch error:", err);
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: "Sorry, I'm having trouble connecting. Please call the clinic directly at +91 98765 43210."

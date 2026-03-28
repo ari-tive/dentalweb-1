@@ -8,6 +8,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Invalid messages" })
     }
 
+    const apiPayload = {
+      model: "llama-3.3-70b-versatile",
+      messages: messages,
+      max_tokens: 500,
+      temperature: 0.7
+    };
+
+    console.log("Sending payload to Groq:", JSON.stringify(apiPayload, null, 2));
+
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
@@ -16,17 +25,16 @@ export default async function handler(req, res) {
           "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: messages,
-          max_tokens: 500,
-          temperature: 0.7
-        })
+        body: JSON.stringify(apiPayload)
       }
     )
 
     const data = await response.json()
-    if (!response.ok) throw new Error(data.error?.message || "Groq failed")
+    console.log("Raw Groq response:", JSON.stringify(data, null, 2));
+    if (!response.ok) {
+      console.error("Groq API Error Detail:", data);
+      throw new Error(data.error?.message || "Groq failed");
+    }
 
     const reply = data.choices?.[0]?.message?.content ||
                   "I couldn't process that. Please try again."
