@@ -154,7 +154,10 @@ export default function Chatbot() {
 
     try {
       // Last 10 messages from the state (user + assistant)
-      const recentHistory = updatedMessages.slice(-10);
+      const recentHistory = updatedMessages.slice(-10).map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
       
       const apiMessages = [
         { role: 'system', content: SYSTEM_PROMPT },
