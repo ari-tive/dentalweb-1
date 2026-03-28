@@ -153,8 +153,8 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
-      const conversationWithoutGreeting = updatedMessages.filter((msg, idx) => !(idx === 0 && msg.role === 'assistant'));
-      const recentHistory = conversationWithoutGreeting.slice(-10);
+      // Last 10 messages from the state (user + assistant)
+      const recentHistory = updatedMessages.slice(-10);
       
       const apiMessages = [
         { role: 'system', content: SYSTEM_PROMPT },
